@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>GB-bot Mobile App</title>
+  <style>
+    :root{
+      --bg1:#4b41b7;
+      --bg2:#766de5;
+      --ink:#25215e;
+      --muted:#a6a2bd;
+      --purple:#7162db;
+      --purple-dark:#4a3db1;
+      --purple-soft:#eeeafd;
+      --orange:#ff651a;
+      --orange2:#ff7d23;
+      --green:#28df8f;
+      --line:#ddd8f4;
+      --card:#ffffffee;
+      --shadow:0 18px 45px rgba(66,53,151,.18), 0 6px 14px rgba(66,53,151,.08);
+      --radius:28px;
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC","PingFang TC","Microsoft JhengHei",Arial,sans-serif;
+      color:var(--ink);
+      background:radial-gradient(circle at 80% 10%,#fff 0,#f3efff 42%,#ddd8ff 100%);
+    }
+
+    .phone{
+      width:min(430px,100vw);
+      min-height:100svh;
+      margin:0 auto;
+      position:relative;
+      overflow:hidden;
+      background:
+        radial-gradient(circle at 20% -5%,rgba(255,255,255,.35),transparent 38%),
+        linear-gradient(165deg,var(--bg1),var(--bg2) 34%,#f8f6ff 34.2%,#fff 100%);
+      box-shadow:0 0 0 1px rgba(255,255,255,.5) inset;
+    }
+
+    .safe{padding:env(safe-area-inset-top) 20px calc(env(safe-area-inset-bottom) + 16px)}
+
+    .statusbar{
+      height:34px;
+      display:flex;
+      align-items:flex-end;
+      justify-content:space-between;
+      color:#fff;
+      font-weight:800;
+      font-size:15px;
+      letter-spacing:.2px;
+      opacity:.96;
+    }
+    .ios-icons{display:flex;gap:7px;align-items:center;font-size:15px}
+    .battery{width:25px;height:12px;border:2px solid #fff;border-radius:3px;position:relative}
+    .battery:after{content:"";position:absolute;right:-5px;top:3px;width:3px;height:5px;background:#fff;border-radius:1px}
+    .battery:before{content:"";position:absolute;left:2px;top:2px;width:16px;height:4px;background:#fff;border-radius:1px}
+
+    header{
+      padding:26px 0 20px;
+      display:grid;
+      grid-template-columns:auto 1fr auto auto;
+      align-items:center;
+      gap:14px;
+      color:white;
+    }
+    .bot{
+      width:58px;height:58px;border-radius:50%;
+      display:grid;place-items:center;
+      background:linear-gradient(140deg,#31b5ff,#6b6be8);
+      box-shadow:0 12px 22px rgba(32,26,116,.22), inset 0 0 0 4px rgba(255,255,255,.16);
+      font-size:34px;
+    }
+    h1{margin:0;font-size:28px;line-height:1;font-weight:900;text-shadow:0 8px 16px rgba(26,20,96,.18)}
+    .pill{
+      display:flex;align-items:center;gap:8px;
+      padding:12px 14px;
+      border-radius:999px;
+      background:rgba(255,255,255,.16);
+      backdrop-filter:blur(14px);
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.18);
+      font-size:14px;font-weight:800;white-space:nowrap;
+    }
+    .dot{width:10px;height:10px;border-radius:50%;background:var(--green);box-shadow:0 0 12px var(--green)}
+    .round-btn{
+      width:48px;height:48px;border:0;border-radius:50%;
+      background:rgba(255,255,255,.18);
+      color:#fff;font-size:23px;display:grid;place-items:center;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.2);
+    }
+    .avatar{background:linear-gradient(135deg,#8179f0,#365bdd)}
+
+    main{display:flex;flex-direction:column;gap:14px;padding-bottom:14px}
+    .card{
+      background:var(--card);
+      border:1px solid rgba(214,209,242,.88);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:20px 16px 18px;
+      backdrop-filter:blur(10px);
+    }
+    .card h2{
+      margin:0 0 16px 4px;
+      color:#5149ba;
+      font-size:22px;
+      line-height:1;
+      font-weight:900;
+      text-transform:lowercase;
+    }
+    textarea,.output-box{
+      width:100%;
+      min-height:180px;
+      border:1.5px solid var(--line);
+      border-radius:18px;
+      background:linear-gradient(180deg,#fff,#fbfaff);
+      color:var(--ink);
+      padding:18px;
+      font-size:16px;
+      line-height:1.55;
+      outline:none;
+      resize:vertical;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.8);
+    }
+    textarea::placeholder{color:#a4a0ba;font-weight:700}
+    .output-box{
+      min-height:198px;
+      position:relative;
+      overflow:hidden;
+    }
+    .output-box:before{
+      content:"";
+      position:absolute;inset:0;
+      opacity:.32;
+      background:
+        radial-gradient(circle at 95% 28%, transparent 0 45px, rgba(116,98,224,.08) 46px 48px, transparent 49px),
+        repeating-radial-gradient(circle at 95% 28%, transparent 0 16px, rgba(116,98,224,.13) 17px 18px, transparent 19px 28px),
+        radial-gradient(ellipse at 30% 87%,rgba(116,98,224,.25) 0 1px,transparent 2px),
+        radial-gradient(ellipse at 35% 82%,rgba(116,98,224,.2) 0 1px,transparent 2px);
+      background-size:auto,auto,12px 12px,15px 15px;
+    }
+    .btn-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
+    .btn{
+      border:0;border-radius:18px;
+      min-height:56px;
+      color:#fff;
+      font-size:18px;
+      font-weight:850;
+      letter-spacing:.2px;
+      display:flex;align-items:center;justify-content:center;gap:11px;
+      box-shadow:0 10px 18px rgba(72,54,174,.22);
+      cursor:pointer;
+    }
+    .btn.purple{background:linear-gradient(135deg,#8f82ee,#6657d2)}
+    .btn.orange{background:linear-gradient(135deg,#ff7e22,#ff5b16);box-shadow:0 10px 18px rgba(255,99,26,.24)}
+    .btn.full{width:100%;margin-top:16px;background:linear-gradient(135deg,#8d7ff0,#6758d1)}
+    .btn:active{transform:translateY(1px)}
+
+    .nav-card{
+      background:rgba(255,255,255,.9);
+      border:1px solid rgba(214,209,242,.85);
+      border-radius:22px;
+      box-shadow:0 14px 28px rgba(66,53,151,.12);
+      padding:12px 14px 14px;
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:8px;
+    }
+    .nav-item{
+      min-height:78px;
+      border-radius:14px;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      gap:7px;
+      color:#5e598d;
+      font-weight:850;
+      font-size:12px;
+      text-align:center;
+    }
+    .nav-item svg{width:26px;height:26px;stroke:currentColor;stroke-width:2.2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+    .nav-item.active{background:#f2effb;color:var(--orange)}
+
+    footer{
+      display:flex;justify-content:center;gap:14px;align-items:center;
+      color:#656189;
+      font-weight:700;font-size:13px;
+      padding:4px 0 2px;
+      white-space:nowrap;
+    }
+    footer span:not(:last-child):after{content:"|";margin-left:14px;color:#d8d3ed}
+    .home-indicator{width:132px;height:5px;border-radius:99px;background:#111;margin:8px auto 0;opacity:.95}
+
+    @media (max-width:380px){
+      .safe{padding-left:14px;padding-right:14px}
+      header{gap:10px}.bot{width:52px;height:52px;font-size:30px}h1{font-size:25px}.round-btn{width:42px;height:42px}.pill{font-size:12px;padding:10px 11px}
+      .nav-card{grid-template-columns:repeat(3,1fr)}
+    }
+  </style>
+</head>
+<body>
+  <div class="phone safe">
+    <div class="statusbar">
+      <div>9:41</div>
+      <div class="ios-icons"><span>▮▮▮</span><span>⌁</span><span class="battery"></span></div>
+    </div>
+
+    <header>
+      <div class="bot" aria-hidden="true">🤖</div>
+      <h1>GB-bot</h1>
+      <div class="pill"><i class="dot"></i>系統狀態：正常</div>
+      <button class="round-btn" aria-label="通知">♢</button>
+      <button class="round-btn avatar" aria-label="個人">●</button>
+    </header>
+
+    <main>
+      <section class="card">
+        <h2>prompt</h2>
+        <textarea id="prompt" placeholder="請輸入您的問題..."></textarea>
+        <div class="btn-row">
+          <button class="btn purple" id="clearBtn">⌄ Clear</button>
+          <button class="btn orange" id="submitBtn">✈ Submit</button>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>output</h2>
+        <div class="output-box" id="output"></div>
+        <button class="btn full">⌄ Flag</button>
+      </section>
+
+      <nav class="nav-card" aria-label="功能選單">
+        <div class="nav-item active">
+          <svg viewBox="0 0 24 24"><path d="M12 2l2 3 3 .5 1 3 3 2-1 3 1 3-3 2-1 3-3 .5-2 3-2-3-3-.5-1-3-3-2 1-3-1-3 3-2 1-3 3-.5z"/><circle cx="12" cy="12" r="3"/></svg>
+          <span>噴頭系統</span>
+        </div>
+        <div class="nav-item">
+          <svg viewBox="0 0 24 24"><path d="M9 3c-4 4-5 8-2 12 2 3 6 4 9 2 3-2 4-6 2-9"/><path d="M15 3c3 3 4 6 2 9"/></svg>
+          <span>墨水系統</span>
+        </div>
+        <div class="nav-item">
+          <svg viewBox="0 0 24 24"><path d="M6 2h9l3 3v17H6z"/><path d="M14 2v5h5"/><path d="M9 13h6M9 17h6"/></svg>
+          <span>收送布處理</span>
+        </div>
+        <div class="nav-item">
+          <svg viewBox="0 0 24 24"><path d="M12 2v13"/><path d="M8 15a4 4 0 1 0 8 0"/></svg>
+          <span>系統狀態</span>
+        </div>
+        <div class="nav-item">
+          <svg viewBox="0 0 24 24"><path d="M5 13a10 10 0 0 1 14 0"/><path d="M8 16a6 6 0 0 1 8 0"/><path d="M11 19a2 2 0 0 1 2 0"/></svg>
+          <span>連線與通訊</span>
+        </div>
+        <div class="nav-item">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="7"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/><circle cx="12" cy="12" r="2"/></svg>
+          <span>定位系統</span>
+        </div>
+        <div class="nav-item">
+          <svg viewBox="0 0 24 24"><path d="M12 2l1.5 3 3.5.5.5 3.5 3 1.5-3 1.5-.5 3.5-3.5.5L12 22l-1.5-3-3.5-.5-.5-3.5-3-1.5 3-1.5.5-3.5 3.5-.5z"/><circle cx="12" cy="12" r="3"/></svg>
+          <span>機械系統</span>
+        </div>
+      </nav>
+    </main>
+
+    <footer>
+      <span>Use via API 🚀</span>
+      <span>Built with Gradio 🤗</span>
+      <span>Settings ⚙️</span>
+    </footer>
+    <div class="home-indicator"></div>
+  </div>
+
+  <script>
+    const prompt = document.querySelector('#prompt');
+    const output = document.querySelector('#output');
+    document.querySelector('#clearBtn').addEventListener('click', () => {
+      prompt.value = '';
+      output.textContent = '';
+    });
+    document.querySelector('#submitBtn').addEventListener('click', () => {
+      const text = prompt.value.trim();
+      output.textContent = text ? `已收到指令：${text}\n\n目前系統狀態正常，請等待 GB-bot 回傳處理結果。` : '請先輸入您的問題。';
+    });
+  </script>
+</body>
+</html>
